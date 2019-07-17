@@ -1,0 +1,29 @@
+---
+- name: Install list of packages needed for kubectl
+  apt:
+    name: "{{ packages }}"
+  vars:
+    packages:
+    - apt-transport-https
+  become: true
+
+- name: Add apt signing key
+  apt_key:
+    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+    state: present
+  become: true
+
+- name: Add kubernets.list
+  template:
+    src: ../templates/kubernetes.list
+    dest: /etc/apt/sources.list.d/kubernetes.list
+    owner: root
+    group: root
+    mode: '0644'
+  become: true
+
+- name: Update repositories cache and install "kubectl"
+  apt:
+    name: kubectl
+    update_cache: yes
+  become: true

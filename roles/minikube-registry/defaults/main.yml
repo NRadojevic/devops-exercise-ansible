@@ -1,0 +1,3 @@
+---
+registry_dir: "/home/{{ username }}/minikube/registry"
+registry_namespace: registry

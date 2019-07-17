@@ -1,0 +1,6 @@
+---
+minikube_dir: "/home/{{ username }}/minikube"
+jenkins_dir: "{{ minikube_dir }}/jenkins"
+jenkins_namespace: jenkins
+registry_dir: "{{ minikube_dir }}/registry"
+registry_namespace: registry

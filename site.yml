@@ -1,0 +1,15 @@
+---
+- hosts: localhost
+  
+  vars_prompt:
+    - name: username
+      prompt: "Enter username to execute ansible"
+      private: no
+
+  roles:
+   - common
+   - docker
+   - minikube
+   - kubectl
+   - minikube-jenkins
+   - minikube-registry

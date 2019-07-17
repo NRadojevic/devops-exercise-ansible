@@ -1,0 +1,3 @@
+---
+jenkins_dir: "/home/{{ username }}/minikube/jenkins"
+jenkins_namespace: jenkins

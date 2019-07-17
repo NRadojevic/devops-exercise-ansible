@@ -1,0 +1,4 @@
+---
+minikube_url: "https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64"
+minikube_file: "minikube"
+minikube_dir: "/home/{{ username }}/minikube"

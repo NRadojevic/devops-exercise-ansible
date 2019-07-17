@@ -1,0 +1,46 @@
+---
+- name: Create jenkins sources directory under {{ jenkins_dir }}
+  file: state=directory path={{ jenkins_dir }}
+
+- name: Check if namespace {{ jenkins_namespace }} already exists
+  command: kubectl get namespace
+  register: namespace_status
+  changed_when: false
+  become: true
+
+- name: Create {{ jenkins_namespace }} namespace
+  command: kubectl create namespace {{ jenkins_namespace }}
+  become: true
+  when:  "'jenkins' not in namespace_status.stdout"
+
+- name: Template kubernetes template to {{ jenkins_dir }}
+  template:
+    src: ../templates/jenkins.yaml
+    dest: "{{ jenkins_dir }}/jenkins.yaml"
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: 0644
+
+- name: Deploy jenkins pod and service
+  command: kubectl apply -f "{{ jenkins_dir }}/jenkins.yaml"
+  become: true
+
+- name: Check for running status of pod
+  command: kubectl get pod --namespace={{ jenkins_namespace }}
+  register: jenkins_pod_status
+  until: "'jenkins' and 'Running' in jenkins_pod_status.stdout"
+  delay: 5
+  retries: 10
+  become: true
+
+- name: Retrieve jenkins admin password from pod
+  command: kubectl exec jenkins --namespace={{ jenkins_namespace }} cat /var/jenkins_home/secrets/initialAdminPassword 
+  register: jenkins_admin_passwd
+  until: "'No such file or directory' not in jenkins_admin_passwd.stderr"
+  delay: 5
+  retries: 10
+  become: true
+ 
+- name: Display jenkins password  
+  debug:
+    var: jenkins_admin_passwd.stdout_lines

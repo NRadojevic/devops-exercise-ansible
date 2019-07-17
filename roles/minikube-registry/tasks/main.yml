@@ -1,0 +1,49 @@
+---
+- name: Create registry sources directory under {{ registry_dir }}
+  file: state=directory path={{ registry_dir }}
+
+- name: Check if namespace {{ registry_namespace }} already exists
+  command: kubectl get namespace
+  register: namespace_status 
+  changed_when: false
+  become: true
+
+- name: Create {{ registry_namespace }} namespace
+  command: kubectl create namespace {{ registry_namespace }}
+  become: true
+  when:  "'registry' not in namespace_status.stdout" 
+
+- name: Template kubernetes template to {{ registry_dir }}
+  template:
+    src: ../templates/registry.yaml
+    dest: "{{ registry_dir }}/registry.yaml"
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: 0644
+
+- name: Deploy registry pod and service
+  command: kubectl apply -f "{{ registry_dir }}/registry.yaml"
+  become: true
+
+- name: Check for running status of pod
+  command: kubectl get pod --namespace={{ registry_namespace }}
+  register: registry_pod_status
+  until: "'registry' and 'Running' in registry_pod_status.stdout"
+  delay: 5
+  retries: 10
+  become: true
+
+- name: Get cluster ip of registry service
+  shell: kubectl get service registry --namespace={{ registry_namespace }} | awk '{ print $3 }' | grep -v CLUSTER-IP
+  register: registry_ip_result
+  become: true
+
+#- name: Add daemon.json to /etc/docker
+#  template:
+#    src: ../templates/daemon.j2
+#    dest: /etc/docker/daemon.json
+#    mode: 0600
+#  become: true
+#  notify:
+#     - reload daemon
+#     - restart docker

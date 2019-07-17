@@ -1,0 +1,25 @@
+---
+- name: Add docker’s GPG key
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+  become: true
+
+- name: Add bionic repository to docker.list
+  template:
+    src: ../templates/docker.list
+    dest: /etc/apt/sources.list.d/docker.list
+    owner: root
+    group: root
+    mode: '0644'
+  become: true
+
+- name: Run "apt update"
+  apt:
+    update_cache: yes
+  become: yes
+
+- name: Install latest version of docker-ce
+  apt:
+    name: docker-ce
+  become: yes

@@ -1,0 +1,27 @@
+---
+- name: Create minikube sources directory under {{ minikube_dir }}
+  file: state=directory path={{ minikube_dir }}
+
+- name: Download minikube sources
+  get_url: url={{ minikube_url }} dest={{ minikube_dir }}/{{ minikube_file }}
+
+- name: Copy minikube file under /usr/local/bin 
+  copy:
+    src: "{{ minikube_dir }}/{{ minikube_file }}"
+    dest: "/usr/local/bin/{{ minikube_file }}"
+    owner: nrado
+    group: nrado
+    mode: '0755'
+  become: true
+
+- name: Start Minikube with option vm-driver=none as docker is used
+  shell: minikube start --vm-driver=none
+  become: true
+
+- name: Check minikube status
+  shell: minikube status
+  register: minikube_status
+  until: "'Running' in minikube_status.stdout"
+  delay: 30
+  retries: 10
+  become: true
