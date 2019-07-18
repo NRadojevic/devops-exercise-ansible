@@ -22,6 +22,18 @@ metadata:
 spec:
   containers:
   - name: jenkins
-    image: jenkins/jenkins:lts
+    image: visibilityspots/jenkins-docker
     ports:
     - containerPort: 8080
+    volumeMounts:
+      - name: jenkins-home
+        mountPath: /var/jenkins_home
+      - name: docker-sock
+        mountPath: /var/run/docker.sock
+  volumes:
+    - name: jenkins-home
+      emptyDir: {}
+    - name: docker-sock
+      hostPath:
+        path: /var/run/docker.sock
+        type: File

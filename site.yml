@@ -7,9 +7,9 @@
       private: no
 
   roles:
-   - common
-   - docker
-   - minikube
-   - kubectl
-   - minikube-jenkins
-   - minikube-registry
+    - common
+    - docker
+    - minikube
+    - kubectl
+    - minikube-jenkins
+    - minikube-registry

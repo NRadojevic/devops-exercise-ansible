@@ -2,8 +2,14 @@
 - name: Create registry sources directory under {{ registry_dir }}
   file: state=directory path={{ registry_dir }}
 
+  #- name: Create certs directory under {{ registry_dir }}
+  #  file: state=directory path={{ registry_dir }}/certs
+  #
+  #- name: Create self signed certificate
+  #  shell: openssl req -newkey rsa:4096 -days 365 -nodes -x509 -subj "/C=US/ST=Denial/L=Springfield/O=Dis/CN=domain.com" -keyout {{ registry_dir }}/certs/domain.key -out {{ registry_dir }}/certs/domain.crt
+
 - name: Check if namespace {{ registry_namespace }} already exists
-  command: kubectl get namespace
+  shell: kubectl get namespace {{ registry_namespace }} || true
   register: namespace_status 
   changed_when: false
   become: true
@@ -38,12 +44,16 @@
   register: registry_ip_result
   become: true
 
-#- name: Add daemon.json to /etc/docker
-#  template:
-#    src: ../templates/daemon.j2
-#    dest: /etc/docker/daemon.json
-#    mode: 0600
-#  become: true
-#  notify:
-#     - reload daemon
-#     - restart docker
+- name: Show cluster ip
+  debug:
+    var: registry_ip_result.stdout
+
+- name: Add daemon.json to /etc/docker
+  template:
+    src: ../templates/daemon.j2
+    dest: /etc/docker/daemon.json
+    mode: 0600
+  become: true
+  notify:
+     - reload daemon
+     - restart docker

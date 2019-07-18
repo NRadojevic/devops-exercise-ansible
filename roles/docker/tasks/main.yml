@@ -23,3 +23,5 @@
   apt:
     name: docker-ce
   become: yes
+  notify:
+    - start docker
