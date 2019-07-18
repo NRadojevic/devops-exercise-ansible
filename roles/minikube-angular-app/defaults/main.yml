@@ -1,0 +1,3 @@
+---
+app_namespace: custom-app
+kubeconfig_dir: "/home/{{ username }}/minikube/kubeconfig" 

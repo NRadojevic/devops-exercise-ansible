@@ -1,0 +1,43 @@
+---
+- name: Create jenkins sources directory under {{ kubeconfig_dir }}
+  file: state=directory path={{ kubeconfig_dir }}
+
+- name: Check if namespace {{ app_namespace }} already exists
+  shell: kubectl get namespace {{ app_namespace }} || true
+  register: namespace_status
+  changed_when: false
+  become: true
+
+- name: Create namespace "{{ app_namespace }}" for deploying custom app
+  command: kubectl create namespace {{ app_namespace }}
+  become: true
+  when: "'custom-app' not in namespace_status.stdout"
+
+- name: Check if serviceaccount "jenkins-sa" already exists
+  shell: kubectl get serviceaccount jenkins-sa --namespace={{ app_namespace }} || true
+  register: serviceaccount_status
+  changed_when: false
+  become: true  
+
+- name: Create a serviceaccount named `jenkins-sa` in {{ app_namespace }}
+  command: kubectl create serviceaccount jenkins-sa --namespace={{ app_namespace }}
+  become: true
+  when: "'jenkins-sa' not in serviceaccount_status.stdout"
+
+- name: Give jenkins-sa administator permissions for namespace "{{ app_namespace }}"
+  shell: kubectl create rolebinding jenkins-ns-admin --clusterrole=admin --namespace={{ app_namespace }} --serviceaccount={{ app_namespace }}:jenkins-sa || true
+  become: true
+
+- name: Copy kubeconfig script to {{ kubeconfig_dir }}
+  template:
+    src: ../templates/create-kubeconfig
+    dest: "{{ kubeconfig_dir }}/create-kubeconfig"
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: 0774
+
+- name: Create kubeconfig with script
+  shell: |
+    cd {{ kubeconfig_dir }}
+    ./create-kubeconfig jenkins-sa --namespace={{ app_namespace }} > {{ kubeconfig_dir }}/kubeconfig
+  become: true

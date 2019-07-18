@@ -12,4 +12,5 @@
     - minikube
     - kubectl
     - minikube-jenkins
+    - minikube-angular-app
     - minikube-registry
