@@ -73,8 +73,7 @@ As you can see I have deployed and used a non-secured private Docker registry. I
 
 As already mentioned I created with the "Kubernetes Continuous Deploy Plugin" a Kubernetes configuation for the access and interaction with the k8s cluster. The ansible role "minikube-angular-app" is used to prepare a kubernetes namespace for the test app and also returns a kubeconfig file I added directly in the kubeconfig stored in Jenkins credentials store:
 
-![img](https://github.com/NRadojevic/devops-exercise-ansible/blob/master/pictures/
-jenkins-kubeconfig-configuration.PNG)
+![img](https://github.com/NRadojevic/devops-exercise-ansible/blob/master/pictures/jenkins-kubeconfig-configuration.PNG)
 
 
 
