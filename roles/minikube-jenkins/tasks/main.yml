@@ -29,8 +29,8 @@
   command: kubectl get pod --namespace={{ jenkins_namespace }}
   register: jenkins_pod_status
   until: "'jenkins' and 'Running' in jenkins_pod_status.stdout"
-  delay: 10
-  retries: 10
+  delay: 30
+  retries: 30
   become: true
 
 - name: Retrieve jenkins admin password from pod
