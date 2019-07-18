@@ -24,9 +24,9 @@ The initial Jenkins AdminPassword can be retrieved from the Ansible outputs:
 
 ![img](https://github.com/NRadojevic/devops-exercise-ansible/blob/master/pictures/ansible-outcome.PNG)
 
-On Jenkins I installed the following plugins:  
+In Jenkins I installed the following plugins:  
 Docker Pipeline, Kubernetes Continuous Deploy Plugin, NodeJS Plugin, Pipeline.
-I used the Docker Pipeline for building and pushing Docker images to my private registry. The Kubernetes Continous Deploy Plugin provides secrets configuration which I have mainly used to deploy pods or services based on templates on Minikube. NodeJS Plugin made it possible to run npm commands which I needed to build my Angular application.
+I used the Docker Pipeline for building and pushing Docker images to my private registry. The Kubernetes Continous Deploy Plugin provides secrets configuration which I mainly used to deploy pods or services based on templates on Minikube. NodeJS Plugin made it possible to run npm commands which I needed to build my Angular application.
 
 As it was not possible to create Git webhooks for https://github.com/NRadojevic/angular-hello-world due to the fact that Github only allows URLs or rather IP addresses reachable from the Internet, but I found an alternative for the pipeline trigger.
 I created a Multibranch Pipeline pointing to the repo mentioned above. Within this repo you can find a Jenkinsfile that only starts the build pipeline for the test/build/deployment of the Angular application. Additionally, I configured "Periodically if not otherwise run" interval to 2 minutes, so that the pipeline is triggered frequently if someone changes the source code.
@@ -36,6 +36,7 @@ I created a Multibranch Pipeline pointing to the repo mentioned above. Within th
 ![img](https://github.com/NRadojevic/devops-exercise-ansible/blob/master/pictures/multibranch-2.PNG)
 
 That's how the pipeline code looks like:
+
 ```groovy
 node {
     
@@ -68,12 +69,19 @@ node {
     }
 }
 ```
+The groovy file is located [here](https://github.com/NRadojevic/angular-hello-world/blob/master/pipelines/test-build-deploy.groovy/test-build-deploy.groovy) and configured in the following way in the Jenkins build pipeline:
 
-As you can see I have deployed and used a non-secured private Docker registry. I tried to create a self-signed certificate and pass the key and cert as enviroment variables in the registry container, but I got different errors, spent too much time on trying to fix that and decided therefore to skip that part. Finally, I added the daemon.json file under /etc/docker on the host (https://github.com/NRadojevic/devops-exercise-ansible/blob/38636717173b5a23bdb7489c215420b2efc97f9a/roles/minikube-registry/tasks/main.yml#L51) and restarted the docker service at the end of the ansible run.
+![img](https://github.com/NRadojevic/devops-exercise-ansible/blob/master/pictures/test-build-pipeline-configuation.PNG)
 
-As already mentioned I created with the "Kubernetes Continuous Deploy Plugin" a Kubernetes configuation for the access and interaction with the k8s cluster. The ansible role "minikube-angular-app" is used to prepare a kubernetes namespace for the test app and also returns a kubeconfig file I added directly in the kubeconfig stored in Jenkins credentials store:
+As you can see I have deployed and used a non-secured private Docker registry. I tried to create a self-signed certificate passing the key and cert as enviroment variables in the registry container, but I got different errors, spent too much time on trying to fix that and therefore decided to skip that part. That's why I added the daemon.json file under /etc/docker/ on the host (https://github.com/NRadojevic/devops-exercise-ansible/blob/38636717173b5a23bdb7489c215420b2efc97f9a/roles/minikube-registry/tasks/main.yml#L51) and restart the docker service at the end of the ansible run.
+
+As already mentioned, I created a Kubernetes configuation with the "Kubernetes Continuous Deploy Plugin" for the access and interaction with the k8s cluster. The ansible role "minikube-angular-app" is used to prepare a kubernetes namespace for the test app and also returns a kubeconfig file I added directly in the kubeconfig stored in Jenkins credentials store:
 
 ![img](https://github.com/NRadojevic/devops-exercise-ansible/blob/master/pictures/jenkins-kubeconfig-configuration.PNG)
 
+After the pipeline has successfully finished you should see the Angular app in your browser (assuming you have also exposed the nodePort in your service and configure port forwarding):
 
+![img](https://github.com/NRadojevic/devops-exercise-ansible/blob/master/pictures/angular-app.PNG)
+
+Due to lack of time I did not manage to deploy the containers as a Deployment object. That should be the correct choice if you want a blue-/green or at least a rolling deployment.
 
