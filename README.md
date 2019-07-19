@@ -28,7 +28,7 @@ In Jenkins I installed the following plugins:
 Docker Pipeline, Kubernetes Continuous Deploy Plugin, NodeJS Plugin, Pipeline.
 I used the Docker Pipeline for building and pushing Docker images to my private registry. The Kubernetes Continous Deploy Plugin provides secrets configuration which I mainly used to deploy pods or services based on templates on Minikube. NodeJS Plugin made it possible to run npm commands which I needed to build my Angular application.
 
-As it was not possible to create Git webhooks for https://github.com/NRadojevic/angular-hello-world due to the fact that Github only allows URLs or rather IP addresses reachable from the Internet, but I found an alternative for the pipeline trigger.
+As it was not possible to create Git webhooks for https://github.com/NRadojevic/angular-hello-world due to the fact that Github only allows URLs or rather IP addresses reachable from the Internet, I found an alternative for the pipeline trigger.
 I created a Multibranch Pipeline pointing to the repo mentioned above. Within this repo you can find a Jenkinsfile that only starts the build pipeline for the test/build/deployment of the Angular application. Additionally, I configured "Periodically if not otherwise run" interval to 2 minutes, so that the pipeline is triggered frequently if someone changes the source code.
 
 ![img](https://github.com/NRadojevic/devops-exercise-ansible/blob/master/pictures/multibranch-1.PNG)
