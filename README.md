@@ -5,7 +5,7 @@ I deployed a virtual machine based on Ubuntu 18.04.02 LTS with the following har
 Within the VM I used Ansible to deploy Docker, Minikube, and the Jenkins and Registry container.
 All you need to do is to clone this repository and execute "ansible-playbook site.yml".
 You will get a prompt where you will have to enter the user who will run the tasks.
-It is recommended that this user can execute commands using sudo without supplying a password. You do not need to distribute SSH to the target hosts as we are going to run the playbooks only on localhost.
+It is recommended that this user can execute commands using sudo without supplying a password. You do not need to distribute SSH keys to the target hosts as we are going to run the playbooks only on the local virtual machine.
 
 The site.yml includes seven roles which are used to:
 1) install the needed packages for docker and similar
