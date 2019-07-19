@@ -73,13 +73,13 @@ The groovy file is located [here](https://github.com/NRadojevic/angular-hello-wo
 
 ![img](https://github.com/NRadojevic/devops-exercise-ansible/blob/master/pictures/test-build-pipeline-configuation.PNG)
 
-As you can see I have deployed and used a non-secured private Docker registry. I tried to create a self-signed certificate passing the key and cert as enviroment variables in the registry container, but I got different errors, spent too much time on trying to fix that and therefore decided to skip that part. That's why I added the daemon.json file under /etc/docker/ on the host (https://github.com/NRadojevic/devops-exercise-ansible/blob/38636717173b5a23bdb7489c215420b2efc97f9a/roles/minikube-registry/tasks/main.yml#L51) and restart the docker service at the end of the ansible run.
+As you can see I have deployed and used a non-secured private Docker registry. I tried to create a self-signed certificate passing the key and cert as enviroment variables in the registry container, but I got different errors, spent too much time on trying to fix that and therefore decided to skip that part. That's why I added the daemon.json file under /etc/docker/ on the host (https://github.com/NRadojevic/devops-exercise-ansible/blob/38636717173b5a23bdb7489c215420b2efc97f9a/roles/minikube-registry/tasks/main.yml#L51) and restarted the docker service at the end of the ansible run.
 
 As already mentioned, I created a Kubernetes configuation with the "Kubernetes Continuous Deploy Plugin" for the access and interaction with the k8s cluster. The ansible role "minikube-angular-app" is used to prepare a kubernetes namespace for the test app and also returns a kubeconfig file I added directly in the kubeconfig stored in Jenkins credentials store:
 
 ![img](https://github.com/NRadojevic/devops-exercise-ansible/blob/master/pictures/jenkins-kubeconfig-configuration.PNG)
 
-After the pipeline has successfully finished you should see the Angular app in your browser (assuming you have also exposed the nodePort in your service and configured port forwarding):
+After the pipeline has successfully finished you should see the Angular app in your browser (assuming you have also exposed the nodePort [4200 -> 30002] in your service and configured port forwarding):
 
 ![img](https://github.com/NRadojevic/devops-exercise-ansible/blob/master/pictures/angular-app.PNG)
 
