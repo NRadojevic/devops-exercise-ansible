@@ -79,7 +79,7 @@ As already mentioned, I created a Kubernetes configuation with the "Kubernetes C
 
 ![img](https://github.com/NRadojevic/devops-exercise-ansible/blob/master/pictures/jenkins-kubeconfig-configuration.PNG)
 
-After the pipeline has successfully finished you should see the Angular app in your browser (assuming you have also exposed the nodePort [4200 -> 30002] in your service and configured port forwarding):
+After the pipeline has successfully finished you should see the Angular app in your browser (assuming you have also exposed the nodePort [4200 -> 30002 in my case] in your service and configured port forwarding):
 
 ![img](https://github.com/NRadojevic/devops-exercise-ansible/blob/master/pictures/angular-app.PNG)
 
